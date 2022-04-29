@@ -1,8 +1,56 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import Image from 'next/image';
+import Gallery from '../components/gallery/gallery.js';
+import styles from '../styles/Home.module.css';
+import React from 'react';
+
+
+
 
 export default function Home() {
+ 
+
+
+  const [music, setMusic] = React.useState("");
+  const [genres, setGenres] = React.useState("");
+
+  React.useEffect(() => {
+
+    const fetchMusic = async () => {
+
+      const response = await fetch('/api/hello');
+
+      const  music  = await response.json();
+      // console.log(music.feed.results);
+      setMusic(music.feed.results);
+
+      setGenres(music.feed.results.reduce((genresToAdd, album) => {
+        const genres = album.genres || [];
+        genres.forEach((genre) => {
+          genresToAdd[genre.name] = genresToAdd[genre.name] || [];
+          genresToAdd[genre.name].push(album);
+        })
+        // genresToAdd[album.genre] = genres[album.genre] || [];
+        // genresToAdd[album.genre].push(album);
+        return genresToAdd;
+      }, {}));
+
+    };
+
+    fetchMusic();
+
+  }, []);
+
+   // // const music = fetch('/api/hello').then((m)=>m.json()).then((list)=>list.feed.results);
+  //  const genres = this.state.music.then((music) => {
+  //   console.log(music);
+  //   return music.reduce((genres, album) => {
+  //     genres[album.genre] = genres[album.genre] || [];
+  //     genres[album.genre].push(album);
+  //     return genres;
+  //   })
+  // });
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,7 +60,11 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
+        <Gallery genres={genres} music={music}></Gallery>
+        {/* {props.genres.map((album) => {
+
+        })} */}
+        {/* <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
@@ -49,7 +101,7 @@ export default function Home() {
               Instantly deploy your Next.js site to a public URL with Vercel.
             </p>
           </a>
-        </div>
+        </div> */}
       </main>
 
       <footer className={styles.footer}>

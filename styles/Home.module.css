@@ -114,3 +114,22 @@
     flex-direction: column;
   }
 }
+
+.genre-title {
+  font-weight: 600;
+  background-color: blue;
+  color: yellow;
+}
+
+.genre-container {
+  margin: 10px;
+  padding: 5px;
+  display: inline-flex;
+  background-color: red;
+}
+
+.album-item {
+  margin: 5px;
+  padding: 3px;
+  background-color: gray;
+}
