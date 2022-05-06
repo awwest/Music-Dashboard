@@ -1,36 +1,44 @@
 import Genre from '../genre/genre';
 import swr from 'swr';
 import useEffect from 'react';
+import { setState, useState } from 'react';
 
-    // export async function getServerSideProps(context) {
-    //     // Call an external API endpoint to get albums
-    //     console.log('fetching');
-    //     // let { music, error } = swr('/api/hello', (...args) => fetch(...args).then((res)=>res.json()));
-    //     const res = await fetch('/api/hello');//https://rss.applemarketingtools.com/api/v2/us/music/most-played/50/albums.json', {mode: 'no-cors', headers: {
-    //         // 'Content-Type': 'application/json',
-    //     // }});
-    //     const feed = await res.json();
-    //     console.log(feed);
-    //     music = feed;
-    //     return {
-    //         props: {
-    //             music,
-    //         },
-    //     }
-    // }
+export default function Gallery({ music }) {
 
-export default function Gallery({ genres, music }) {
-
-    console.log(genres);
-    console.log(music);
-    // const genres = music && music.reduce((genres, album) => {
-    //     genres[album.genre] = genres[album.genre] || [];
-    //     genres[album.genre].push(album);
-    //     return genres;
-    // }, {});
+    const [genres, setGenres] = useState("");
 
     function updateSearch(e) {
-        console.log(e.currentTarget.innerText);
+        const term = e.target.value.toLowerCase();
+        if (music.length === 0) {
+            return;
+        }
+        setGenres(music.reduce((genresToAdd, album) => {
+            const albumName = album.name.toLowerCase();
+            const artistName = album.artistName.toLowerCase();
+            if (term && !albumName.includes(term) && !artistName.includes(term)) {
+                return genresToAdd;
+            }
+            const genres = album.genres || [];
+            genres.forEach((genre) => {
+              genresToAdd[genre.name] = genresToAdd[genre.name] || [];
+              genresToAdd[genre.name].push(album);
+            })
+            return genresToAdd;
+          }, {}));
+
+    }
+
+    if (genres.length === 0 && music.length) {
+        setGenres(music.reduce((genresToAdd, album) => {
+            const albumName = album.name.toLowerCase();
+            const artistName = album.artistName.toLowerCase();
+            const genres = album.genres || [];
+            genres.forEach((genre) => {
+              genresToAdd[genre.name] = genresToAdd[genre.name] || [];
+              genresToAdd[genre.name].push(album);
+            })
+            return genresToAdd;
+          }, {}));
     }
 
     return (
@@ -44,7 +52,6 @@ export default function Gallery({ genres, music }) {
                 placeholder='search'></input>
         </div> 
             {Object.keys(genres).map((genre) => { 
-                console.log(genre)
                 return <Genre key={genre} genre={genre} music={genres[genre]}></Genre>          
             })}
     </div>

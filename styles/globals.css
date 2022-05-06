@@ -70,5 +70,5 @@ input.search {
   position: relative;
   display: flex;
   justify-content: space-between;
-  padding: 10px;
+  width: 90vw;
 }
